@@ -1,2 +1,0 @@
-# neog-js
- Learning JS
