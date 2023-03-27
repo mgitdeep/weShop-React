@@ -1,4 +1,4 @@
-// Fully functional Login page!
+// Fully functional Login & Login with Google page!
 
 import styles from './Auth.module.scss'
 import loginImg from "../../assets/login.png"

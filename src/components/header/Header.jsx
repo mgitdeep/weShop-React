@@ -1,3 +1,5 @@
+// Logout functionality added!
+
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import styles from "./Header.module.scss";
 import { FaShoppingCart, FaTimes } from "react-icons/fa";
