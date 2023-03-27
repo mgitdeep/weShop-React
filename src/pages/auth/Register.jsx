@@ -1,3 +1,5 @@
+// Fully functional User Registration page!
+
 import styles from './Auth.module.scss'
 import registerImg from "../../assets/register.png"
 import { Link, useNavigate } from 'react-router-dom'
