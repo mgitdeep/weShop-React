@@ -12,8 +12,8 @@ import Loader from '../../components/loader/Loader'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-// Firebase integration
-import { signInWithEmailAndPassword } from 'firebase/auth'
+// Firebase integration & Also integrating Login with Google functionality
+import { GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth'
 import { auth } from '../../firebase/config'
 
 
@@ -23,7 +23,7 @@ const Login = () => {
   const [password, setPassword] = useState("")
   const [loader, setLoader] = useState(false)
 
-  const navigateToLogin = useNavigate()
+  const navigateTo = useNavigate()
 
   const handleLogin = (f) => {
     f.preventDefault()
@@ -43,7 +43,7 @@ const Login = () => {
         setLoader(false)
 
         toast.success("Login Successful!")
-        navigateToLogin("/login")
+        navigateTo("/")
      
       })
       .catch((error) => {
@@ -59,6 +59,27 @@ const Login = () => {
       setEmail("")
       setPassword("")
     }
+  }
+
+  // Login with Google
+  const provider = new GoogleAuthProvider();
+  
+  const loginWithGoogle = () => {
+
+    signInWithPopup(auth, provider)
+    .then((result) => {
+
+      // The signed-in user info.
+      const user = result.user;
+      console.log(user)
+      toast.success("Login Successful!")
+
+      navigateTo("/")
+
+    }).catch((error) => {
+      
+      toast.error(error.message)
+    });
   }
 
   return (
@@ -88,7 +109,7 @@ const Login = () => {
               <Link to="/reset">Reset Password</Link>
             </div>
             <p>-- or --</p>
-            <button className='--btn --btn-danger --btn-block'><BsGoogle />Login with Google</button>
+            <button className='--btn --btn-danger --btn-block' onClick={loginWithGoogle}><BsGoogle />Login with Google</button>
           </form>
           <span className={styles.register}>
             <p>Don't have an account?</p>
