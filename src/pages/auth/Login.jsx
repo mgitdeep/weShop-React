@@ -1,3 +1,5 @@
+// Fully functional Login page!
+
 import styles from './Auth.module.scss'
 import loginImg from "../../assets/login.png"
 import { Link, useNavigate } from 'react-router-dom'
