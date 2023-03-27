@@ -1,6 +1,6 @@
 import styles from './Auth.module.scss'
 import registerImg from "../../assets/register.png"
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Card from '../../components/card/Card'
 import { useState } from 'react'
 
@@ -8,11 +8,19 @@ import { useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+// Firebase integration
+import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { auth } from '../../firebase/config'
+import Loader from '../../components/loader/Loader'
+
 const Register = () => {
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmpass, setConfirmpass] = useState("")
+  const [loader, setLoader] = useState(false)
+
+  const navigateToLogin = useNavigate()
 
   const handleRegister = (f) => {
     f.preventDefault()
@@ -20,8 +28,33 @@ const Register = () => {
 
     if ( password !== confirmpass ) {
       toast.error("Password do not match!")
+    } else if ( email === "" || password === "" || confirmpass === "") {
+      toast.error("Please enter details")
     } else {
-      toast.success("Successfully Registered!")
+
+      setLoader(true)
+      // Integrating with Firebase
+      createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+       
+        const user = userCredential.user;
+        console.log(user)
+
+        setLoader(false)
+
+        toast.success("Successfully Registered!")
+        navigateToLogin("/login")
+     
+      })
+      .catch((error) => {
+        // const errorCode = error.code;
+        const errorMessage = error.message;
+        // console.log(errorMessage.slice(10))
+        toast.error(errorMessage.slice(10))                 // we added this line :)
+
+        setLoader(false)
+      
+      });
 
       setEmail("")
       setPassword("")
@@ -34,6 +67,7 @@ const Register = () => {
   return (
     <>
     <ToastContainer />
+      { loader && <Loader />}
       <section className={` ${styles.auth}`}>
         
         <Card>
