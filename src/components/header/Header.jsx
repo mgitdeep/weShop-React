@@ -2,13 +2,13 @@
 
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import styles from "./Header.module.scss";
-import { FaShoppingCart, FaTimes } from "react-icons/fa";
+import { FaShoppingCart, FaTimes, FaUserCircle } from "react-icons/fa";
 import { HiOutlineMenuAlt3 } from "react-icons/hi";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // Firebase integration
 import { auth } from "../../firebase/config";
-import { signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 
 // Toastify imports
 import { ToastContainer, toast } from 'react-toastify';
@@ -37,7 +37,26 @@ const activeLink = ({isActive}) => ( isActive ? `${styles.active}` : "" )
 
 
 const Header = () => {
+
   const [showMenu, setShowMenu] = useState(false);
+  const [displayName, setDisplayName] = useState("");
+
+  // Monitor currently Signed in user
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log(user.displayName)
+
+        setDisplayName(user.displayName)
+
+      } else {
+        // User is signed out
+        // ...
+      }
+    });
+
+  }, [])
+  
 
   const navigateToHome = useNavigate()
 
@@ -53,6 +72,7 @@ const Header = () => {
     signOut(auth).then(() => {
       toast.success("You've Logged out!")
       // Sign-out successful.
+      setDisplayName("")
       navigateToHome("/")
     }).catch((error) => {
       // An error happened.
@@ -88,6 +108,7 @@ const Header = () => {
 
             <div className={styles["header-right"]} onClick={hideMenu}>
               <span className={styles.links}> 
+                <NavLink to="#"><FaUserCircle size={16} /> Hi, {displayName}</NavLink>
                 <NavLink to="/login" className={activeLink}>Login</NavLink>
                 <NavLink to="/register" className={activeLink}>Register</NavLink>
                 <NavLink to="/order-history" className={activeLink}>My Orders</NavLink>
